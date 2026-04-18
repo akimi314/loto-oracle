@@ -1,215 +1,156 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎯 運命のロト予想 | LOTO ORACLE</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Oswald:wght@300;500;700&display=swap');
-:root {
-  --gold: #c9a84c; --gold-light: #f0d080; --deep: #0a0612; --dark: #120e1e;
-  --card: #1a1428; --accent: #7b4bbd; --accent2: #e05c8a; --text: #e8dfc8; --muted: #7a7090;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--deep); color: var(--text); font-family: 'Noto Serif JP', serif; min-height: 100vh; }
-.container { max-width: 800px; margin: 0 auto; padding: 20px 16px 60px; }
-.header { text-align: center; padding: 40px 0 30px; border-bottom: 1px solid rgba(201,168,76,0.2); margin-bottom: 32px; }
-h1 { font-family: 'Oswald', sans-serif; font-size: clamp(28px,7vw,52px); font-weight: 700; background: linear-gradient(135deg, #f0d080, #c9a84c, #a07820); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.subtitle { font-size: 12px; color: var(--muted); letter-spacing: 2px; margin-top: 8px; }
-.mode-selector { display: flex; gap: 8px; margin-bottom: 28px; }
-.mode-btn { flex: 1; padding: 12px; background: var(--card); border: 1px solid rgba(201,168,76,0.15); border-radius: 8px; color: var(--muted); font-family: 'Oswald', sans-serif; font-size: 16px; cursor: pointer; }
-.mode-btn.active { border-color: var(--gold); color: #f0d080; }
-.card { background: var(--card); border: 1px solid rgba(201,168,76,0.12); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-.card-title { font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 3px; color: var(--gold); margin-bottom: 18px; text-transform: uppercase; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-label { font-size: 11px; color: var(--muted); }
-input[type="number"], input[type="text"], select { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 14px; width: 100%; }
-input:focus, select:focus { outline: none; border-color: var(--gold); }
-select option { background: var(--dark); }
-.toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.toggle-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 14px; }
-.toggle-label { font-size: 12px; color: var(--text); }
-.toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); border-radius: 22px; transition: 0.3s; }
-.slider:before { position: absolute; content: ''; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
-.toggle input:checked + .slider { background: var(--gold); }
-.toggle input:checked + .slider:before { transform: translateX(18px); }
-.worker-setup { background: rgba(123,75,189,0.07); border: 1px solid rgba(123,75,189,0.2); border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; }
-.worker-label { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
-.worker-row { display: flex; gap: 8px; align-items: center; }
-.fetch-btn { white-space: nowrap; padding: 10px 16px; background: rgba(123,75,189,0.6); border: 1px solid rgba(123,75,189,0.5); border-radius: 8px; color: #e8dfc8; font-family: 'Oswald', sans-serif; font-size: 13px; cursor: pointer; flex-shrink: 0; }
-.fetch-status { margin-top: 10px; font-size: 12px; min-height: 18px; }
-.fetch-status.loading { color: var(--gold); }
-.fetch-status.success { color: #80e0a0; }
-.fetch-status.error { color: #e08080; }
-.worker-hint { font-size: 10px; color: var(--muted); margin-top: 8px; }
-.past-textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 14px; resize: vertical; min-height: 100px; line-height: 2; }
-.past-stats { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-.past-count { font-size: 12px; color: var(--muted); }
-.past-count span { color: #f0d080; font-family: 'Oswald', sans-serif; font-size: 15px; }
-.clear-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--muted); font-size: 11px; padding: 4px 12px; cursor: pointer; }
-.past-mode-row { display: flex; gap: 8px; margin-bottom: 14px; }
-.past-mode-item { flex: 1; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
-.past-mode-text { font-size: 12px; color: var(--text); }
-.past-mode-sub { font-size: 10px; color: var(--muted); }
-.excluded-preview { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-.ex-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(224,92,138,0.12); border: 1px solid rgba(224,92,138,0.3); font-family: 'Oswald', sans-serif; font-size: 12px; color: #e05c8a; }
-.gen-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #c9a84c, #a07820); border: none; border-radius: 12px; color: #0a0612; font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 3px; cursor: pointer; margin-bottom: 24px; }
-.results-area { display: none; }
-.results-area.visible { display: block; }
-.result-set { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.2); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-.result-label { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--muted); margin-bottom: 14px; text-transform: uppercase; }
-.balls { display: flex; gap: 10px; flex-wrap: wrap; }
-.ball { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; }
-.ball-loto6 { background: radial-gradient(circle at 35% 35%, #f0d080, #c9a84c, #8a6020); color: #0a0612; }
-.ball-loto7 { background: radial-gradient(circle at 35% 35%, #c085e0, #7b4bbd, #4a2080); color: white; }
-.filter-summary { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 16px; padding: 10px; border: 1px dashed rgba(201,168,76,0.2); border-radius: 8px; }
-.destiny-display { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
-.destiny-item { text-align: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(201,168,76,0.1); }
-.destiny-num { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; color: #f0d080; }
-.destiny-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; }
-.info-box { background: rgba(255,255,255,0.03); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 12px; }
-.info-title { font-size: 11px; color: var(--gold); letter-spacing: 2px; margin-bottom: 6px; font-family: 'Oswald', sans-serif; text-transform: uppercase; }
-.info-text { font-size: 13px; color: var(--text); line-height: 1.7; }
-.affiliate-card { background: rgba(224,92,138,0.08); border: 1px solid rgba(224,92,138,0.2); border-radius: 14px; padding: 20px; margin-top: 28px; }
-.affiliate-title { font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 3px; color: var(--accent2); margin-bottom: 14px; text-transform: uppercase; }
-.aff-link { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; text-decoration: none; color: var(--text); }
-.aff-name { font-size: 14px; font-weight: 700; }
-.aff-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.aff-arrow { color: var(--gold); font-size: 20px; }
-.notice { text-align: center; font-size: 11px; color: var(--muted); margin-top: 24px; line-height: 1.8; padding: 14px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;color:var(--gold);border:1px solid rgba(201,168,76,0.4);padding:4px 14px;display:inline-block;margin-bottom:16px;">✦ Numerology × Lottery ✦</div>
-    <h1>LOTO ORACLE</h1>
-    <p class="subtitle">運命数 × 四柱推命 × 統計フィルター</p>
-  </div>
-  <div class="mode-selector">
-    <button class="mode-btn active" onclick="setMode('loto6')" id="btn-loto6">LOTO 6</button>
-    <button class="mode-btn" onclick="setMode('loto7')" id="btn-loto7">LOTO 7</button>
-  </div>
-  <div class="card">
-    <div class="card-title">▸ 個人情報入力（運命数・四柱推命）</div>
-    <div class="form-row">
-      <div class="form-group"><label>生年（西暦）</label><input type="number" id="byear" placeholder="1990" min="1900" max="2010"></div>
-      <div class="form-group"><label>生月</label><input type="number" id="bmonth" placeholder="7" min="1" max="12"></div>
-      <div class="form-group"><label>生日</label><input type="number" id="bday" placeholder="15" min="1" max="31"></div>
-    </div>
-    <div id="destiny-display" class="destiny-display" style="display:none"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">▸ フィルター設定</div>
-    <div class="form-row" style="grid-template-columns:1fr 1fr;margin-bottom:18px">
-      <div class="form-group"><label>生成セット数</label><select id="setCount"><option value="3">3セット</option><option value="5" selected>5セット</option><option value="7">7セット</option><option value="10">10セット</option></select></div>
-      <div class="form-group"><label>運命数の重み</label><select id="destinyWeight"><option value="0">使わない</option><option value="1">低め</option><option value="2" selected>普通</option><option value="3">強め</option></select></div>
-    </div>
-    <div class="toggle-grid">
-      <div class="toggle-item"><div><div class="toggle-label">連続数字を除外</div><div style="font-size:10px;color:var(--muted)">1,2,3,4,5,6 など</div></div><label class="toggle"><input type="checkbox" id="exSeq" checked><span class="slider"></span></label></div>
-      <div class="toggle-item"><div><div class="toggle-label">全偶数・全奇数を除外</div><div style="font-size:10px;color:var(--muted)">確率が低い組み合わせ</div></div><label class="toggle"><input type="checkbox" id="exAllEvenOdd" checked><span class="slider"></span></label></div>
-      <div class="toggle-item"><div><div class="toggle-label">低数字固まりを除外</div><div style="font-size:10px;color:var(--muted)">全て10以下など</div></div><label class="toggle"><input type="checkbox" id="exLowCluster" checked><span class="slider"></span></label></div>
-      <div class="toggle-item"><div><div class="toggle-label">四柱推命ラッキー数字を優先</div><div style="font-size:10px;color:var(--muted)">生年月日から算出</div></div><label class="toggle"><input type="checkbox" id="useSichu" checked><span class="slider"></span></label></div>
-      <div class="toggle-item"><div><div class="toggle-label">数字帯を均等に分布</div><div style="font-size:10px;color:var(--muted)">低・中・高に分散</div></div><label class="toggle"><input type="checkbox" id="evenDist" checked><span class="slider"></span></label></div>
-      <div class="toggle-item"><div><div class="toggle-label">末尾重複を避ける</div><div style="font-size:10px;color:var(--muted)">下一桁の被りを減らす</div></div><label class="toggle"><input type="checkbox" id="exSameTail" checked><span class="slider"></span></label></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">▸ 過去の当選番号を除外</div>
-    <div class="worker-setup">
-      <div class="worker-label">🔧 Cloudflare Worker URL</div>
-      <div class="worker-row">
-        <input type="text" id="workerUrl" placeholder="https://dry-bonus-63ad.akimi314.workers.dev" style="flex:1;font-size:12px;letter-spacing:0;">
-        <button class="fetch-btn" onclick="autoFetch()" id="fetchBtn">⬇ 自動取得</button>
-      </div>
-      <div class="fetch-status" id="fetchStatus"></div>
-      <div class="worker-hint">※ Worker未設定の場合は下のテキストエリアに手動入力してください</div>
-    </div>
-    <div class="past-mode-row">
-      <label class="past-mode-item"><input type="radio" name="pastMode" value="numbers" checked onchange="updatePastPreview()"><div><div class="past-mode-text">個別番号を除外</div><div class="past-mode-sub">過去に出た数字を候補から外す</div></div></label>
-      <label class="past-mode-item"><input type="radio" name="pastMode" value="combos" onchange="updatePastPreview()"><div><div class="past-mode-text">同じ組み合わせを除外</div><div class="past-mode-sub">完全一致した組み合わせのみ除外</div></div></label>
-    </div>
-    <textarea class="past-textarea" id="pastNums" placeholder="1行に1回分の当選番号をスペース区切りで入力&#10;または上の「自動取得」ボタンで自動入力" oninput="updatePastPreview()"></textarea>
-    <div class="past-stats">
-      <div class="past-count"><span id="pastSetCount">0</span> 回分入力済 ／ 除外対象: <span id="pastNumCount">0</span> 個</div>
-      <button class="clear-btn" onclick="document.getElementById('pastNums').value='';updatePastPreview()">クリア</button>
-    </div>
-    <div class="excluded-preview" id="excludedPreview"></div>
-  </div>
-  <button class="gen-btn" onclick="generate()">✦ 運命の数字を導き出す ✦</button>
-  <div class="results-area" id="resultsArea">
-    <div class="filter-summary" id="filterSummary"></div>
-    <div id="resultsList"></div>
-    <div class="card" id="destinyCard" style="display:none">
-      <div class="card-title">▸ あなたの運命数解説</div>
-      <div id="destinyInfo"></div>
-    </div>
-  </div>
-  <div class="affiliate-card">
-    <div class="affiliate-title">📌 ロトをネットで購入できるサービス</div>
-    <a class="aff-link" href="https://www.takarakuji-official.jp/" target="_blank"><div><div class="aff-name">🎰 宝くじ公式サイト</div><div class="aff-desc">ロト6・ロト7・ジャンボ等すべて購入可</div></div><div class="aff-arrow">›</div></a>
-    <a class="aff-link" href="https://www.mizuhobank.co.jp/takarakuji/index.html" target="_blank"><div><div class="aff-name">🏦 みずほ銀行 ネット宝くじ</div><div class="aff-desc">ジャンボ含む全種類対応</div></div><div class="aff-arrow">›</div></a>
-    <a class="aff-link" href="https://www.rakuten-bank.co.jp/lottery/" target="_blank"><div><div class="aff-name">🛒 楽天銀行 宝くじ</div><div class="aff-desc">ロト・ナンバーズ購入対応</div></div><div class="aff-arrow">›</div></a>
-  </div>
-  <div class="notice">⚠️ このツールは統計・数秘術に基づくエンターテイメントです。当選を保証するものではありません。</div>
-</div>
-<script>
-let currentMode='loto6';
-function setMode(m){currentMode=m;document.getElementById('btn-loto6').classList.toggle('active',m==='loto6');document.getElementById('btn-loto7').classList.toggle('active',m==='loto7');}
-function calcDestinyNumber(y,m,d){let s=String(y).split('').reduce((a,b)=>a+parseInt(b),0)+m+d;while(s>9&&s!==11&&s!==22&&s!==33)s=String(s).split('').reduce((a,b)=>a+parseInt(b),0);return s;}
-function getSichuLucky(y){const e=Math.floor(((y-4)%10)/2);const m={0:[3,4,8,9,13,14,18,19,23,24,28,29,33,34,38,39],1:[1,2,6,7,11,12,16,17,21,22,26,27,31,32,36,37],2:[5,10,15,20,25,30,35,40,43],3:[6,7,16,17,26,27,36,37,42,43],4:[1,2,11,12,21,22,31,32,41,42]};return m[e]||m[0];}
-function getSichuName(y){const s=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'],b=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];return s[(y-4)%10]+b[(y-4)%12]+'年';}
-const DM={1:{name:'独立・指導',color:'#f0d080',desc:'強いリーダーシップと独創性を持つ数。'},2:{name:'協調・直感',color:'#80c0f0',desc:'感受性が高く直感力に優れる数。'},3:{name:'創造・表現',color:'#a0e080',desc:'創造性と明るさの数。'},4:{name:'安定・実務',color:'#c0a060',desc:'堅実さと安定を表す数。'},5:{name:'変化・自由',color:'#e080c0',desc:'変化と冒険を好む数。'},6:{name:'愛・責任',color:'#80e0c0',desc:'愛と調和の数。'},7:{name:'探求・神秘',color:'#a080e0',desc:'内省と精神性の数。'},8:{name:'物質・力',color:'#e0c080',desc:'物質的成功と力の数。'},9:{name:'完成・智慧',color:'#e08080',desc:'完成と智慧の数。'},11:{name:'直感・閃き',color:'#d0a0f0',desc:'マスターナンバー。'},22:{name:'実現・建設',color:'#f0c0a0',desc:'マスタービルダー。'},33:{name:'奉仕・愛',color:'#c0f0a0',desc:'マスターティーチャー。'}};
-function getDestinyNumbers(n,max){const r=[];let x=n;while(x<=max){r.push(x);x+=n;}for(let i=1;i<=max;i++){const s=String(i).split('').reduce((a,b)=>a+parseInt(b),0);if(s===n%9||s===0)r.push(i);}return[...new Set(r)].filter(x=>x>=1&&x<=max);}
-function generate(){
-  const y=parseInt(document.getElementById('byear').value),m=parseInt(document.getElementById('bmonth').value),d=parseInt(document.getElementById('bday').value);
-  const hasInfo=!isNaN(y)&&!isNaN(m)&&!isNaN(d)&&y>1900;
-  const mode=currentMode,max=mode==='loto6'?43:37,pick=mode==='loto6'?6:7;
-  const setCount=parseInt(document.getElementById('setCount').value),dw=parseInt(document.getElementById('destinyWeight').value);
-  const exSeq=document.getElementById('exSeq').checked,exAEO=document.getElementById('exAllEvenOdd').checked,exLC=document.getElementById('exLowCluster').checked;
-  const useSichu=document.getElementById('useSichu').checked,evenDist=document.getElementById('evenDist').checked,exST=document.getElementById('exSameTail').checked;
-  let dn=5,lucky=[],sichu=[];
-  if(hasInfo){dn=calcDestinyNumber(y,m,d);lucky=getDestinyNumbers(dn,max);if(useSichu)sichu=getSichuLucky(y).filter(n=>n<=max);}
-  const pm=document.querySelector('input[name="pastMode"]:checked').value;
-  const{pastNumbers,pastCombos}=parsePastNumbers();
-  const pool={};for(let i=1;i<=max;i++)pool[i]=1;
-  if(pm==='numbers')pastNumbers.forEach(n=>{if(pool[n])pool[n]=0;});
-  if(hasInfo){lucky.forEach(n=>{if(pool[n])pool[n]+=dw;});sichu.forEach(n=>{if(pool[n])pool[n]+=1;});}
-  const results=[];let attempts=0;
-  while(results.length<setCount&&attempts<2000){
-    attempts++;const nums=weightedSample(pool,pick);if(!nums)continue;
-    const sorted=nums.sort((a,b)=>a-b);
-    if(exSeq&&isSeq(sorted,pick))continue;
-    if(exAEO){const ev=sorted.filter(n=>n%2===0).length;if(ev===0||ev===pick)continue;}
-    if(exLC&&sorted[Math.floor(pick/2)]<Math.floor(max*0.3))continue;
-    if(evenDist&&!isDist(sorted,max))continue;
-    if(exST&&hasSameTail(sorted))continue;
-    if(pm==='combos'&&pastCombos.has(sorted.join(',')))continue;
-    if(results.some(r=>r.join(',')===sorted.join(',')))continue;
-    results.push(sorted);
+/**
+ * LOTO ORACLE - Cloudflare Worker（KVキャッシュ＋Cron自動更新版）
+ *
+ * ── デプロイ手順 ──────────────────────────────────────────
+ * 1. Cloudflare Dashboard → Workers & Pages → dry-bonus-63ad → コードを編集
+ * 2. このコードを全コピーして貼り付け → 展開する
+ *
+ * ── KV設定（Cron自動更新を使う場合）─────────────────────
+ * 1. Workers & Pages → KV → 「Create namespace」→ 名前: LOTO_CACHE
+ * 2. dry-bonus-63ad → Settings → Variables → KV Namespace Bindings
+ *    Variable name: LOTO_CACHE, KV namespace: 上で作ったもの
+ *
+ * ── Cron設定（毎週自動更新）──────────────────────────────
+ * dry-bonus-63ad → Settings → Triggers → Cron Triggers → Add Cron Trigger
+ * 値: 0 15 * * 1,4  （月曜・木曜 15:00 UTC = 日本時間0:00）
+ * ──────────────────────────────────────────────────────────
+ */
+
+export default {
+  // 通常のHTTPリクエスト
+  async fetch(request, env, ctx) {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Content-Type': 'application/json; charset=utf-8',
+    };
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    const url = new URL(request.url);
+    const type = url.searchParams.get('type') || 'loto6';
+
+    try {
+      const numbers = await getNumbers(type, env);
+
+      return new Response(JSON.stringify({
+        success: true,
+        type,
+        count: numbers.length,
+        data: numbers,
+        fetchedAt: new Date().toISOString(),
+      }), { headers: corsHeaders });
+
+    } catch (e) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: e.message,
+      }), { status: 500, headers: corsHeaders });
+    }
+  },
+
+  // Cronによる自動更新（毎週月曜・木曜）
+  async scheduled(event, env, ctx) {
+    console.log('Cron: ロト当選番号を自動更新中...');
+    try {
+      const loto6 = await fetchAllLoto6();
+      const loto7 = await fetchAllLoto7();
+
+      if (env.LOTO_CACHE) {
+        const today = new Date().toISOString().slice(0, 10);
+        await env.LOTO_CACHE.put(`loto6_${today}`, JSON.stringify(loto6), { expirationTtl: 86400 * 8 });
+        await env.LOTO_CACHE.put(`loto7_${today}`, JSON.stringify(loto7), { expirationTtl: 86400 * 8 });
+        console.log(`Cron完了: ロト6 ${loto6.length}件, ロト7 ${loto7.length}件`);
+      }
+    } catch (e) {
+      console.error('Cron失敗:', e.message);
+    }
   }
-  const area=document.getElementById('resultsArea'),list=document.getElementById('resultsList');
-  area.className='results-area visible';list.innerHTML='';
-  const filters=[];
-  if(exSeq)filters.push('連続数字除外');if(exAEO)filters.push('全偶/全奇除外');if(exLC)filters.push('低数字固まり除外');if(evenDist)filters.push('分布均等化');if(exST)filters.push('末尾重複軽減');
-  if(pastNumbers.size>0&&pm==='numbers')filters.push(`過去番号${pastNumbers.size}個除外`);if(hasInfo&&dw>0)filters.push(`運命数${dn}反映`);if(hasInfo&&useSichu)filters.push('四柱推命反映');
-  document.getElementById('filterSummary').textContent=`適用フィルター: ${filters.join(' · ')} ｜ ${results.length}セット生成`;
-  results.forEach((set,i)=>{const div=document.createElement('div');div.className='result-set';div.innerHTML=`<div class="result-label">SET ${i+1} — ${mode.toUpperCase()}</div><div class="balls">${set.map(n=>`<div class="ball ball-${mode}">${n}</div>`).join('')}</div>`;list.appendChild(div);});
-  if(hasInfo&&dn){const dc=document.getElementById('destinyCard');dc.style.display='block';const info=DM[dn]||DM[1];document.getElementById('destinyInfo').innerHTML=`<div class="destiny-display"><div class="destiny-item"><div class="destiny-num" style="color:${info.color}">${dn}</div><div class="destiny-lbl">運命数</div></div><div class="destiny-item"><div class="destiny-num" style="font-size:20px;color:var(--gold)">${getSichuName(y)}</div><div class="destiny-lbl">四柱推命・年干支</div></div></div><div class="info-box" style="margin-top:14px"><div class="info-title">運命数${dn}「${info.name}」</div><div class="info-text">${info.desc}</div></div>`;}
-  area.scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+// KVキャッシュ付きデータ取得
+async function getNumbers(type, env) {
+  // KVが設定されている場合はキャッシュを使う
+  if (env.LOTO_CACHE) {
+    const today = new Date().toISOString().slice(0, 10);
+    const cacheKey = `${type}_${today}`;
+    try {
+      const cached = await env.LOTO_CACHE.get(cacheKey, 'json');
+      if (cached && cached.length > 0) return cached;
+    } catch (e) {}
+  }
+
+  // キャッシュがない場合はスクレイピング
+  const numbers = type === 'loto6' ? await fetchAllLoto6() : await fetchAllLoto7();
+
+  // KVに保存
+  if (env.LOTO_CACHE) {
+    const today = new Date().toISOString().slice(0, 10);
+    await env.LOTO_CACHE.put(`${type}_${today}`, JSON.stringify(numbers), { expirationTtl: 86400 * 8 });
+  }
+
+  return numbers;
 }
-function weightedSample(pool,count){const arr=Object.entries(pool).map(([k,v])=>({n:parseInt(k),w:v}));const sel=[],used=new Set();for(let i=0;i<count;i++){const av=arr.filter(x=>!used.has(x.n));if(!av.length)return null;const tw=av.reduce((s,x)=>s+x.w,0);let r=Math.random()*tw;for(const item of av){r-=item.w;if(r<=0){sel.push(item.n);used.add(item.n);break;}}}return sel.length===count?sel:null;}
-function isSeq(s,p){let c=1,m=1;for(let i=1;i<s.length;i++){if(s[i]===s[i-1]+1){c++;m=Math.max(m,c);}else c=1;}return m>=p-1;}
-function isDist(s,max){const t=Math.floor(max/3);return s.filter(n=>n<=t).length>=1&&s.filter(n=>n>t*2).length>=1;}
-function hasSameTail(s){const c={};s.forEach(n=>{const t=n%10;c[t]=(c[t]||0)+1;});return Object.values(c).some(v=>v>=3);}
-['byear','bmonth','bday'].forEach(id=>document.getElementById(id).addEventListener('input',updateDestinyPreview));
-function updateDestinyPreview(){const y=parseInt(document.getElementById('byear').value),m=parseInt(document.getElementById('bmonth').value),d=parseInt(document.getElementById('bday').value),el=document.getElementById('destiny-display');if(!isNaN(y)&&!isNaN(m)&&!isNaN(d)&&y>1900&&m>=1&&m<=12&&d>=1&&d<=31){const dn=calcDestinyNumber(y,m,d),info=DM[dn]||{name:'—',color:'#c9a84c'};el.style.display='grid';el.innerHTML=`<div class="destiny-item"><div class="destiny-num" style="color:${info.color}">${dn}</div><div class="destiny-lbl">運命数「${info.name}」</div></div><div class="destiny-item"><div class="destiny-num" style="font-size:18px;color:var(--gold)">${getSichuName(y)}</div><div class="destiny-lbl">四柱推命・干支</div></div>`;}else el.style.display='none';}
-async function autoFetch(){const wu=document.getElementById('workerUrl').value.trim(),st=document.getElementById('fetchStatus'),btn=document.getElementById('fetchBtn');if(!wu){st.className='fetch-status error';st.textContent='⚠ Worker URLを入力してください';return;}btn.disabled=true;st.className='fetch-status loading';st.textContent='⏳ 全件取得中...（10〜20秒かかります）';try{const res=await fetch(`${wu.replace(/\/$/,'')}?type=${currentMode}`);if(!res.ok)throw new Error(`HTTPエラー: ${res.status}`);const json=await res.json();if(!json.success)throw new Error(json.error||'取得失敗');document.getElementById('pastNums').value=json.data.map(n=>n.join(' ')).join('\n');updatePastPreview();st.className='fetch-status success';st.textContent=`✓ ${json.count}回分（全件）を取得しました`;}catch(e){st.className='fetch-status error';st.textContent=`✗ 取得失敗: ${e.message}`;}finally{btn.disabled=false;}}
-function parsePastNumbers(){const raw=document.getElementById('pastNums').value,lines=raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0),pn=new Set(),pc=new Set();lines.forEach(line=>{const nums=line.split(/[\s,　]+/).map(s=>parseInt(s.replace(/[^0-9]/g,''))).filter(n=>!isNaN(n)&&n>=1&&n<=43);if(nums.length>=5){nums.forEach(n=>pn.add(n));pc.add([...nums].sort((a,b)=>a-b).join(','));}});return{pastNumbers:pn,pastCombos:pc,lineCount:lines.length};}
-function updatePastPreview(){const{pastNumbers,pastCombos,lineCount}=parsePastNumbers(),pm=document.querySelector('input[name="pastMode"]:checked').value;document.getElementById('pastSetCount').textContent=lineCount;document.getElementById('pastNumCount').textContent=pm==='numbers'?pastNumbers.size:pastCombos.size;const prev=document.getElementById('excludedPreview');if(pm==='numbers'&&pastNumbers.size>0){prev.innerHTML=[...pastNumbers].sort((a,b)=>a-b).map(n=>`<div class="ex-num">${n}</div>`).join('');}else prev.innerHTML='';}
-</script>
-</body>
-</html>
+
+async function fetchAllLoto6() {
+  const res = await fetch('https://www.ohtashp.com/topics/takarakuji/loto6/', {
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+  });
+  if (!res.ok) throw new Error(`取得失敗: ${res.status}`);
+  return parseAllNumbers(await res.text(), 6, 43);
+}
+
+async function fetchAllLoto7() {
+  const res = await fetch('https://www.ohtashp.com/topics/takarakuji/loto7/', {
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+  });
+  if (!res.ok) throw new Error(`取得失敗: ${res.status}`);
+  return parseAllNumbers(await res.text(), 7, 37);
+}
+
+function parseAllNumbers(html, ballCount, maxNum) {
+  const results = [];
+  const seen = new Set();
+  const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let trMatch;
+  while ((trMatch = trRegex.exec(html)) !== null) {
+    const row = trMatch[1];
+    const tdRegex = /<td[^>]*>\s*(\d{1,2})\s*<\/td>/gi;
+    const nums = [];
+    let tdMatch;
+    while ((tdMatch = tdRegex.exec(row)) !== null) {
+      const n = parseInt(tdMatch[1]);
+      if (n >= 1 && n <= maxNum) nums.push(n);
+    }
+    if (nums.length >= ballCount) {
+      const main = [...new Set(nums.slice(0, ballCount))].sort((a, b) => a - b);
+      if (main.length === ballCount) {
+        const key = main.join(',');
+        if (!seen.has(key)) { seen.add(key); results.push(main); }
+      }
+    }
+  }
+  if (results.length < 10) return fallbackParse(html, ballCount, maxNum);
+  return results;
+}
+
+function fallbackParse(html, ballCount, maxNum) {
+  const results = [];
+  const seen = new Set();
+  for (const line of html.split(/[\n\r<>]/)) {
+    const nums = line.trim().split(/\s+/)
+      .map(p => parseInt(p.replace(/[^0-9]/g, '')))
+      .filter(n => !isNaN(n) && n >= 1 && n <= maxNum);
+    if (nums.length >= ballCount) {
+      const chunk = [...new Set(nums.slice(0, ballCount))].sort((a, b) => a - b);
+      if (chunk.length === ballCount) {
+        const key = chunk.join(',');
+        if (!seen.has(key)) { seen.add(key); results.push(chunk); }
+      }
+    }
+  }
+  return results;
+}
